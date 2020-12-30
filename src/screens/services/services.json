@@ -1,0 +1,70 @@
+{
+	"services": {
+		"facial": {
+			"antiaging": [
+				"5faa4f39dfbd7a3ac1a1556e",
+				"5faa4f51dfbd7a3ac1a1556f",
+			],
+			"fruit": [
+				"5faa4f1ddfbd7a3ac1a1556d",
+				"5faa4ef8dfbd7a3ac1a1556c",
+			],
+			"regular": [
+				"5faa4ebbdfbd7a3ac1a1556a",
+				"5faa4edbdfbd7a3ac1a1556b",
+			],
+		},
+		"haircare": {
+			"haircolor": [
+				"5fa800193af4b1329c7cd6b9",
+				"5fa6db563af4b1329c7cd6a7",
+				"5fa8003a3af4b1329c7cd6ba",
+			],
+			"haircut": {
+				"kids": [
+					"5fa6dd563af4b1329c7cd6a8",
+				],
+				"men": [
+					"5fa6ddeb3af4b1329c7cd6a9",
+				],
+				"women": [
+					"5fa6de4f3af4b1329c7cd6aa",
+					"5fa6dea23af4b1329c7cd6ab",
+				],
+			},
+		},
+		"nails": {
+			"pedicure": [
+				"5faa51b4dfbd7a3ac1a15571",
+				"5faa51c0dfbd7a3ac1a15572",
+			],
+			"manicure": [
+				"5faa519cdfbd7a3ac1a15570",
+				"5faa51c7dfbd7a3ac1a15573",
+			],
+		},
+		"other": [
+			"5fa6dfe73af4b1329c7cd6ac",
+			"5fa6e02b3af4b1329c7cd6ad",
+			"5fa6e7533af4b1329c7cd6af",
+			"5fa80cc83af4b1329c7cd6bb",
+		],
+		"threading": [
+			"5faa48aadfbd7a3ac1a15566",
+			"5faa48c1dfbd7a3ac1a15567",
+			"5faa48cddfbd7a3ac1a15568",
+			"5faa48e5dfbd7a3ac1a15569",
+		],
+		"waxing": [
+			"5fa7f8613af4b1329c7cd6b0",
+			"5fa7f8773af4b1329c7cd6b1",
+			"5fa7f88b3af4b1329c7cd6b2",
+			"5fa7f8a93af4b1329c7cd6b3",
+			"5fa7f8c43af4b1329c7cd6b4",
+			"5fa7f8d83af4b1329c7cd6b5",
+			"5fa7fa573af4b1329c7cd6b8",
+			"5fa7f8ef3af4b1329c7cd6b6",
+			"5fa7f9023af4b1329c7cd6b7",
+		],
+	},
+}

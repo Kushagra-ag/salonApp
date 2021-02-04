@@ -5,8 +5,8 @@ import {
     Image,
     BackHandler,
     ScrollView,
-    SafeAreaView
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     Header,
     Content,
@@ -20,21 +20,13 @@ import {
     List,
     ListItem
 } from 'native-base';
-import { useFocusEffect } from '@react-navigation/native';
 import stylesCtm from '../../../styles';
 
 export default function Haircare({ navigation }) {
-    const back = () => {
-        console.log('in back fn');
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }]
-        });
-        return true;
-    };
 
     useFocusEffect(
         React.useCallback(() => {
+            // addServices([])
             BackHandler.addEventListener('hardwareBackPress', back);
 
             return () => {
@@ -43,6 +35,12 @@ export default function Haircare({ navigation }) {
         }, [])
     );
 
+    const back = () => {
+        navigation.navigate('Services',{
+            screen: 'Index'
+        });
+        return true;
+    };
     return (
         <React.Fragment>
             <Header>
@@ -56,7 +54,6 @@ export default function Haircare({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView>
                     <View>
                         <Text style={stylesCtm.heading}>
@@ -108,7 +105,6 @@ export default function Haircare({ navigation }) {
                         </List>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
         </React.Fragment>
     );
 }

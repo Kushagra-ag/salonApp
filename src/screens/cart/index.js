@@ -3,8 +3,7 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
-    SafeAreaView
+    ScrollView
 } from 'react-native';
 import {
     Col,
@@ -42,14 +41,14 @@ export default function Cart({ navigation }) {
 
     const populateCart = async res => {
         setCartItems(services => [...services, res]);
-        setPrice(res.price, 'add');
+        setPrice(res.totalPrice, 'add');
     };
 
     const removeItem = id => {
         cartItems.forEach(async item => {
             if (item._id === id) {
                 setCartItems(cartItems => cartItems.filter(_ => _ !== item));
-                setPrice(item.price, 'rem');
+                setPrice(item.totalPrice, 'sub');
             }
         });
     };
@@ -67,8 +66,8 @@ export default function Cart({ navigation }) {
             setAmt(0);
             getCart().then(res => {
                 if (res) {
-                    res.map(id => {
-                        fetchProduct(id, populateCart);
+                    res.map(ser => {
+                        fetchProduct(ser.id, populateCart, ser.qty);
                     });
                 }
             });
@@ -84,7 +83,6 @@ export default function Cart({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView>
                     <Text style={stylesCtm.heading}>My Cart</Text>
                     <View style={{ paddingVertical: 20 }}>
@@ -115,7 +113,17 @@ export default function Cart({ navigation }) {
                                             </Text>
                                         </Body>
                                         <Right>
-                                            <Text> {`\$${item.price}`} </Text>
+                                            <Text
+                                                style={{ fontWeight: 'bold' }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: 13,
+                                                        fontWeight: 'normal'
+                                                    }}
+                                                >{`${item.qty} x  `}</Text>
+                                                {`\$${item.price}`}
+                                            </Text>
                                         </Right>
                                     </ListItem>
                                 ))}
@@ -136,13 +144,15 @@ export default function Cart({ navigation }) {
                         <Button
                             dark
                             block
-                            disbaled
+                            disabled={amt > 0 ? false : true}
                             style={{ marginHorizontal: 40, marginVertical: 40 }}
-                            onPress={
-                                () => navigation.navigate('Tracking')
-                                // navigation.navigate("Stripe", {
-                                //     price: amt,
-                                // })
+                            onPress={() =>
+                                navigation.navigate('Tracking', {
+                                    screen: 'Index',
+                                    params: {
+                                        price: amt
+                                    }
+                                })
                             }
                         >
                             <Text style={stylesCtm.buttonText}>
@@ -151,8 +161,7 @@ export default function Cart({ navigation }) {
                         </Button>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
-            <BottomNav navigation={navigation} />
+            <BottomNav />
         </React.Fragment>
     );
 }

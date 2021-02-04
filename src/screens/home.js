@@ -43,7 +43,6 @@ import { searchService } from '../methods/miscMethods.js';
 
 export default function Home({ navigation }) {
     const [view, setView] = useState(false);
-    const [text, setText] = useState('View all');
     const [searchQuery, updateSearchQuery] = useState('');
     const [searchRes, updateSearchRes] = useState([]);
 
@@ -73,11 +72,6 @@ export default function Home({ navigation }) {
             searchService(e.nativeEvent.text, handleSearchResults);
     };
 
-    const handleView = () => {
-        setView(!view);
-        !view ? setText('View less') : setText('View all');
-    };
-
     useEffect(() => {
         return () => console.log('from home return');
     }, []);
@@ -97,8 +91,8 @@ export default function Home({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <SafeAreaView style={{ flex: 1 }}>
-                <ScrollView>
+            
+                <ScrollView showsVerticalScrollIndicator={false}>
                     <View>
                         <Text style={stylesCtm.heading}>
                             What can we help you with today?
@@ -233,101 +227,20 @@ export default function Home({ navigation }) {
                                     </ListItem>
                                 </React.Fragment>
                             )}
-                            {view && Boolean(!searchQuery) && (
-                                <View>
-                                    <ListItem
-                                        thumbnail
-                                        onPress={() =>
-                                            navigation.navigate('Services', {
-                                                screen: 'Facial'
-                                            })
-                                        }
-                                    >
-                                        <Left>
-                                            <Thumbnail
-                                                square
-                                                source={require('../../assets/app/haircare.jpg')}
-                                            />
-                                        </Left>
-                                        <Body>
-                                            <Text
-                                                style={stylesCtm.listItemBody}
-                                            >
-                                                {' '}
-                                                Facial{' '}
-                                            </Text>
-                                        </Body>
-                                        <Right>
-                                            <Icon name="arrow-forward" />
-                                        </Right>
-                                    </ListItem>
-
-                                    <ListItem
-                                        thumbnail
-                                        onPress={() =>
-                                            navigation.navigate('Services', {
-                                                screen: 'Nails'
-                                            })
-                                        }
-                                    >
-                                        <Left>
-                                            <Thumbnail
-                                                square
-                                                source={require('../../assets/app/haircare.jpg')}
-                                            />
-                                        </Left>
-                                        <Body>
-                                            <Text
-                                                style={stylesCtm.listItemBody}
-                                            >
-                                                {' '}
-                                                Nails{' '}
-                                            </Text>
-                                        </Body>
-                                        <Right>
-                                            <Icon name="arrow-forward" />
-                                        </Right>
-                                    </ListItem>
-                                    <ListItem
-                                        thumbnail
-                                        onPress={() =>
-                                            navigation.navigate('Services', {
-                                                screen: 'Other'
-                                            })
-                                        }
-                                    >
-                                        <Left>
-                                            <Thumbnail
-                                                square
-                                                source={require('../../assets/app/haircare.jpg')}
-                                            />
-                                        </Left>
-                                        <Body>
-                                            <Text
-                                                style={stylesCtm.listItemBody}
-                                            >
-                                                {' '}
-                                                Other Services{' '}
-                                            </Text>
-                                        </Body>
-                                        <Right>
-                                            <Icon name="arrow-forward" />
-                                        </Right>
-                                    </ListItem>
-                                </View>
-                            )}
                         </List>
                     </View>
                     {Boolean(!searchQuery) && (
                         <View style={{ paddingHorizontal: 20 }}>
-                            <TouchableOpacity onPress={handleView}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Services', {
+                                screen: "Index"
+                            })}>
                                 <Text
                                     style={{
                                         color: '#999',
                                         fontWeight: 'bold'
                                     }}
                                 >
-                                    {text}
+                                    View all
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -358,7 +271,10 @@ export default function Home({ navigation }) {
                                 style={{ marginLeft: 20, overflow: 'hidden' }}
                                 onPress={() =>
                                     navigation.navigate('Services', {
-                                        screen: 'Haircare'
+                                        screen: 'Haircare',
+                                        params: {
+                                            screen: 'Index'
+                                        }
                                     })
                                 }
                             >
@@ -371,8 +287,8 @@ export default function Home({ navigation }) {
                         </Row>
                     </Grid>
                 </ScrollView>
-            </SafeAreaView>
-            <BottomNav navigation={navigation} />
+                <BottomNav />
+            
         </React.Fragment>
     );
 }

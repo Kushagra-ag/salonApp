@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Image, StyleSheet, Platform } from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView, Platform } from 'react-native';
 import { StackActions, CommonActions } from 'react-navigation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,7 +8,7 @@ import {
     DrawerContentScrollView,
     DrawerItem
 } from '@react-navigation/drawer';
-import { Container, Grid, Row } from 'native-base';
+import { Container } from 'native-base';
 import * as Notifications from 'expo-notifications';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { logout, profileCheck } from '../methods/authMethods.js';
@@ -149,19 +149,6 @@ function CustomDrawerContentAndroid(props) {
                         labelStyle={stylesCtm.sidebarLabel}
                     />
 
-                    {
-                        // <Grid>
-                        // 			<Row>
-                        // 				<Entypo
-                        // 					name="shopping-cart"
-                        // 					size={24}
-                        // 					color="black"
-                        // 					style={stylesCtm.sidebarIcon}
-                        // 				/>
-                        // 				<Text>My Cart</Text>
-                        // 			</Row>
-                        // 		</Grid>
-                    }
                     <View style={stylesCtm.sidebarFooter}>
                         <Text>Ebeauty &#8226; Terms of services</Text>
                     </View>
@@ -191,36 +178,39 @@ export default function Screens({ navigation }) {
 
     return (
         <Container>
-            {Platform.OS == 'ios' ? (
-                <Stack.Navigator initialRouteName="Home" headerMode="none">
-                    <Stack.Screen name="Home" component={Home} />
-                    <Stack.Screen name="Services" component={Services} />
-                    <Stack.Screen name="Cart" component={Cart} />
-                    <Stack.Screen name="Tracking" component={Tracking} />
-                    <Stack.Screen name="Profile" component={Profile} />
-                    <Stack.Screen name="Orders" component={Orders} />
-                    <Stack.Screen name="Stripe" component={Stripe} />
-                    <Stack.Screen name="Menu" component={Menu} />
-                </Stack.Navigator>
-            ) : (
-                <Drawer.Navigator
-                    initialRouteName="Home"
-                    headerMode="none"
-                    drawerPosition="right"
-                    screenOptions={{ swipeEnabled: false }}
-                    drawerContent={props => (
-                        <CustomDrawerContentAndroid {...props} />
-                    )}
-                >
-                    <Drawer.Screen name="Home" component={Home} />
-                    <Drawer.Screen name="Services" component={Services} />
-                    <Drawer.Screen name="Cart" component={Cart} />
-                    <Drawer.Screen name="Tracking" component={Tracking} />
-                    <Drawer.Screen name="Profile" component={Profile} />
-                    <Drawer.Screen name="Orders" component={Orders} />
-                    <Drawer.Screen name="Stripe" component={Stripe} />
-                </Drawer.Navigator>
-            )}
+            <SafeAreaView style={stylesCtm.safeAreaView}>
+                {Platform.OS == 'ios' ? (
+                    <Stack.Navigator initialRouteName="Home" headerMode="none">
+                        <Stack.Screen name="Home" component={Home} />
+                        <Stack.Screen name="Services" component={Services} />
+                        <Stack.Screen name="Cart" component={Cart} />
+                        <Stack.Screen name="Tracking" component={Tracking} />
+                        <Stack.Screen name="Profile" component={Profile} />
+                        <Stack.Screen name="Orders" component={Orders} />
+                        <Stack.Screen name="Stripe" component={Stripe} />
+                        <Stack.Screen name="Menu" component={Menu} />
+                    </Stack.Navigator>
+                ) : (
+                    <Drawer.Navigator
+                        initialRouteName="Home"
+                        headerMode="none"
+                        drawerPosition="right"
+                        // unmountOnBlur="true"
+                        screenOptions={{ swipeEnabled: false }}
+                        drawerContent={props => (
+                            <CustomDrawerContentAndroid {...props} />
+                        )}
+                    >
+                        <Drawer.Screen name="Home" component={Home} />
+                        <Drawer.Screen name="Services" component={Services} />
+                        <Drawer.Screen name="Cart" component={Cart} />
+                        <Drawer.Screen name="Tracking" component={Tracking} />
+                        <Drawer.Screen name="Profile" component={Profile} />
+                        <Drawer.Screen name="Orders" component={Orders} />
+                        <Drawer.Screen name="Stripe" component={Stripe} />
+                    </Drawer.Navigator>
+                )}
+            </SafeAreaView>
         </Container>
     );
 }

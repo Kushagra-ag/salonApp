@@ -124,6 +124,7 @@ export default function Login({ navigation }) {
                         <Button
                             primary
                             block
+                            disabled={loading ? true : false}
                             style={stylesCtm.primaryBtn}
                             onPress={onSubmit}
                         >

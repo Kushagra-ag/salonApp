@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -6,8 +6,7 @@ import {
     Image,
     BackHandler,
     TouchableOpacity,
-    ScrollView,
-    SafeAreaView
+    ScrollView
 } from 'react-native';
 import {
     Header,
@@ -26,20 +25,13 @@ import {
     Label
 } from 'native-base';
 import { useFocusEffect } from '@react-navigation/native';
+import { getOrders } from '../../methods/miscMethods.js';
 import stylesCtm from '../../styles';
 // import { alertBox } from '../../../methods/cartMethods.js';
 
 export default function Profile({ navigation }) {
-    const [details, setDetails] = useState({
-        name: 'kushagra',
-        email: 'test@test.com',
-        mobile: 'test'
-    });
 
-    const handleChange = (text, name) => {
-        setDetails({ ...details, [name]: text });
-        // console.log(cred)
-    };
+    const [orders, addOrders] = useState([]);
 
     const back = () => {
         navigation.reset({
@@ -59,6 +51,13 @@ export default function Profile({ navigation }) {
         }, [])
     );
 
+    const handleOrders = res => addOrders(orders => [...orders, res]);
+
+    useEffect(() => {
+        addOrders([]);
+        getOrders(handleOrders)
+    }, [])
+
     return (
         <React.Fragment>
             <Header>
@@ -72,61 +71,85 @@ export default function Profile({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView>
                     <Text style={stylesCtm.heading}>My Orders</Text>
                     <View style={{ paddingVertical: 20 }}>
                         <List>
-                            <ListItem onPress={() => null}>
-                                <Body>
-                                    <Text style={stylesCtm.orderDetailsHeading}>
-                                        12 November 20
-                                    </Text>
-                                    <View style={stylesCtm.orderDetailsView}>
-                                        <View>
-                                            <Text>Total Items</Text>
-                                            <Text>Total Price</Text>
-                                            <Text style={styles.status}>
-                                                Status
+        
+                            {orders.length > 0 &&
+                            orders.map(order =>
+                                order ? (
+                                    <ListItem
+                                        
+                                        key={order._id}
+                                    >
+                                        
+                                        <Body>
+                                            <Text style={stylesCtm.orderDetailsHeading}>
+                                                {Date(order.created).slice(4,15)}
                                             </Text>
-                                        </View>
-                                        <View>
-                                            <Text style={styles.align}>3</Text>
-                                            <Text style={styles.align}>
-                                                $45
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    fontWeight: 'bold',
-                                                    ...styles.status
-                                                }}
-                                            >
-                                                Completed
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </Body>
-                            </ListItem>
+                                            <View style={stylesCtm.orderDetailsView}>
+
+                                                {
+                                                    
+                                                    order.products.map(product => 
+
+                                                        <React.Fragment>
+                                                            
+                                                            <Text>{product.product.title}</Text>
+                                                            
+                                                            <Text style={styles.align}>{`${product.quantity} x \$${product.product.price}`}</Text>
+                                                        </React.Fragment>
+                                                    )
+                                                }
+                                            </View>
+                                            <View style={stylesCtm.orderDetailsView}>
+                                            
+                                                <View>
+                                                    
+                                                    <Text style={styles.margin}>Total Price</Text>
+                                                    <Text>
+                                                        Status
+                                                    </Text>
+                                                </View>
+                                                <View>
+                                                    
+                                                    <Text style={{...styles.align, ...styles.margin, fontWeight:'bold'}}>
+                                                        {`\$${order.totalPrice}`}
+                                                    </Text>
+                                                    <Text
+                                                        style={{
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        {order.status}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </Body>
+                                        
+                                    </ListItem>
+                                ) : null
+                            )}
                         </List>
 
                         <Button
                             dark
                             block
                             style={{ marginHorizontal: 40, marginVertical: 40 }}
-                            onPress={() => null}
+                            onPress={back}
                         >
-                            <Text style={stylesCtm.buttonText}>Save</Text>
+                            <Text style={stylesCtm.buttonText}>Back</Text>
                         </Button>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
         </React.Fragment>
     );
 }
 
 const styles = StyleSheet.create({
-    status: {
-        marginTop: 10
+    margin: {
+        marginTop: 20
     },
     align: {
         alignSelf: 'flex-end'

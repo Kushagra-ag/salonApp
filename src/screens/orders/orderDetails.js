@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { StyleSheet, View, Text, Image, BackHandler } from 'react-native';
+import { StyleSheet, View, Text, Image, BackHandler, ScrollView } from 'react-native';
 import {
     Header,
     Content,
@@ -43,7 +43,7 @@ export default function Profile({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-
+            <ScrollView>
             <Text style={stylesCtm.heading}>Set your new password</Text>
             <View style={{ padding: 20, alignItems: 'center' }}>
                 <Item inlineLabel style={{ marginBottom: 10 }}>
@@ -73,6 +73,7 @@ export default function Profile({ navigation }) {
                     <Text style={stylesCtm.buttonText}>Set Password</Text>
                 </Button>
             </View>
+            </ScrollView>
         </React.Fragment>
     );
 }

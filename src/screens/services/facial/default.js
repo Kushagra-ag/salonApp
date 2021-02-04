@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, BackHandler, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     Header,
     Content,
@@ -13,28 +14,27 @@ import {
     List,
     ListItem
 } from 'native-base';
-import { useFocusEffect } from '@react-navigation/native';
 import stylesCtm from '../../../styles';
 
 export default function Haircare({ navigation }) {
-    const back = () => {
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }]
-        });
-        return true;
-    };
 
     useFocusEffect(
         React.useCallback(() => {
+            // addServices([])
             BackHandler.addEventListener('hardwareBackPress', back);
 
-            return function () {
-                console.log('in haircare return');
+            return () => {
                 BackHandler.removeEventListener('hardwareBackPress', back);
             };
         }, [])
     );
+
+    const back = () => {
+        navigation.navigate('Services',{
+            screen: 'Index'
+        });
+        return true;
+    };
 
     return (
         <React.Fragment>

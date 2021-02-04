@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "240408750132",
+    "firebase_url": "https://ebeauty-efb4a.firebaseio.com",
+    "project_id": "ebeauty-efb4a",
+    "storage_bucket": "ebeauty-efb4a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240408750132:android:6cd269a0c4726491364261",
+        "android_client_info": {
+          "package_name": "com.finexus.ebeauty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "240408750132-7ki7mhjoc6rsse8h11v9se370c9db3c2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTvCYRFR8mdNw5RQpvg44MAOHumPX0vuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "240408750132-7ki7mhjoc6rsse8h11v9se370c9db3c2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

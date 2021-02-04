@@ -1,6 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Alert } from 'react-native';
-import { Toast } from 'native-base';
+import { Alert, Text, TextInput, View } from 'react-native';
+import { Toast, Button } from 'native-base';
 import axios from 'axios';
 import { profileCheck } from './authMethods.js';
 import { API } from './config.js';
@@ -9,7 +10,8 @@ const options = {
     'content-type': 'application/json'
 };
 
-export const addToCart = async s => {
+export const addToCart = async (s, qty) => {
+    console.log('s-',s);
     try {
         const profile = await profileCheck();
         const {
@@ -18,22 +20,22 @@ export const addToCart = async s => {
 
         let cart = await AsyncStorage.getItem(`@e_beauty_cart__${email}`);
         if (!cart) {
-            console.log('null');
-            cart = s;
+            cart = [{id: s, qty: qty}]
         } else {
-            // console.log('whole cart - ', cart);
-            const uni = duplicateCheck(s, cart.split(','));
+            console.log('whole cart - ', cart);
+            cart = JSON.parse(cart);
+            const uni = duplicateCheck(s, cart);
 
-            if (!uni) {
-                return Toast.show({
-                    text: 'Service already added to cart',
-                    buttonText: ''
-                });
+            if (uni!=null) {
+
+                console.log("item found!")
+                cart[uni].id = s;
+                cart[uni].qty = qty
+            } else {
+                cart.push({id: s, qty: qty})
             }
-
-            cart = cart + ',' + s;
         }
-        await AsyncStorage.setItem(`@e_beauty_cart__${email}`, cart);
+        await AsyncStorage.setItem(`@e_beauty_cart__${email}`, JSON.stringify(cart));
 
         Toast.show({
             text: 'Service added to cart',
@@ -57,18 +59,17 @@ export const removeFromCart = async (s, next) => {
 
         let cart = await AsyncStorage.getItem(`@e_beauty_cart__${email}`);
         if (!cart) {
-            console.log('null');
-            cart = s;
+            return
         } else {
             // console.log(cart);
-            cart = cart.split(',');
+            cart = JSON.parse(cart)
 
-            const index = cart.indexOf(s);
-            cart.splice(index, 1);
+            const index = cart.map(item => item.id).indexOf(s)
+            cart.splice(index, 1);          // delete cart[s]
 
             await AsyncStorage.setItem(
                 `@e_beauty_cart__${email}`,
-                cart.toString()
+                JSON.stringify(cart)
             );
 
             Toast.show({
@@ -88,6 +89,7 @@ export const removeFromCart = async (s, next) => {
 
 export const alertBox = (e, s, service) => {
     console.log(service);
+
     Alert.alert(
         `${service}`,
         `One line description. Do you want to add '${service}' to your cart?`,
@@ -133,29 +135,30 @@ export const alertBoxRemove = (e, s, service, next) => {
 };
 
 const duplicateCheck = (currentSer, arr) => {
-    let flag = 1;
+    let flag = null;
 
-    arr.forEach(service => {
-        // console.log('current ser - ', service);
-        if (service === currentSer) flag = 0;
+    arr.forEach((service, idx) => {
+        if (service.id === currentSer) flag = idx;
     });
 
-    return flag;
+    return flag
 };
 
 export const getCart = async () => {
-    // await AsyncStorage.removeItem(`@e_beauty_cart__${email}`);
+    
     let profile = await profileCheck();
     const {
         user: { email }
     } = profile;
 
+    // await AsyncStorage.removeItem(`@e_beauty_cart__${email}`);
+
     let items = await AsyncStorage.getItem(`@e_beauty_cart__${email}`);
-    console.log(items);
+    // console.log('from getcart', items);
 
     if (items) {
-        items = items.split(',');
-        return items;
+        console.log('from getcart', JSON.parse(items));
+        return JSON.parse(items);
     }
 
     return null;
@@ -163,21 +166,23 @@ export const getCart = async () => {
 
 // Fetching product details
 
-export const fetchProduct = (id, next) => {
+export const fetchProduct = (id, next, qty) => {
     axios
         .get(`${API}product/${id}`, {
-            header: options
+            headers: options
         })
         .then(res => {
-            // console.log(res.data.product);
+            // console.log('succ?-', res.data.success);
             if (res.data.success) {
                 next({
                     name: res.data.product.displayName,
                     title: res.data.product.title,
                     price: res.data.product.price,
+                    totalPrice: res.data.product.price * qty,
                     _id: res.data.product._id,
                     img: res.data.product.image,
-                    description: res.data.product.description
+                    description: res.data.product.description,
+                    qty: qty || 1
                 });
             } else return null;
         })

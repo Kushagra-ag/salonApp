@@ -17,6 +17,9 @@ const styles = StyleSheet.create({
         marginVertical: 30,
         alignSelf: 'flex-start'
     },
+    safeAreaView: {
+        height: height,
+    },
     listItem: {
         // This class is to be deleted
         marginBottom: 10
@@ -36,21 +39,31 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         color: '#fff'
     },
+    mapContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: height
+    },
     mapMarkerPin: {
-        marginBottom: 20,
         height: 24,
         width: 24
     },
     mapsTopPanel: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         position: 'absolute',
         top: 0,
         width: '100%',
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         backgroundColor: '#edebed',
         zIndex: 10
     },
     mapsTopPanelText: {
-        fontSize: 15
+        paddingHorizontal: 10,
+        fontSize: 18
     },
     mapsBottomPanel: {
         position: 'absolute',
@@ -96,7 +109,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         // position:'absolute',
-        bottom: 0
+        // bottom: 0,
     }
 });
 

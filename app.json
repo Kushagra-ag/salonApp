@@ -25,6 +25,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBov-hgk72VmzPEXpUtzZHvvzFwf7rqhco"
+        }
+      },
+      "googleServicesFile": "./google-services.json",
       "useNextNotificationsApi": true,
       "package": "com.finexus.ebeauty",
       "versionCode": 1

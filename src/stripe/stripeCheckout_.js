@@ -4,15 +4,15 @@
  * @returns {String}
  */
 export function stripeCheckoutRedirectHTML(key, price) {
-    // border: 1px solid transparent;
-    //  border-radius: 4px;
-    //  background-color: white;
+	// border: 1px solid transparent;
+	//  border-radius: 4px;
+	//  background-color: white;
 
-    //  box-shadow: 0 1px 3px 0 #e6ebf1;
+	//  box-shadow: 0 1px 3px 0 #e6ebf1;
 
-    // const [status, setStatus] = useState(true);
+	// const [status, setStatus] = useState(true);
 
-    return `
+	return `
   <!DOCTYPE html>
 	<html>
 		<head>
@@ -70,7 +70,7 @@ export function stripeCheckoutRedirectHTML(key, price) {
 					outline: none;
 				}
 				input#submit {
-					background-color: #2f78e8;
+					background-color: #f85f6a;
 					margin-top: 20px;
 					font-weight: bold;
 					font-size: 110%;
@@ -134,10 +134,6 @@ export function stripeCheckoutRedirectHTML(key, price) {
 					type="submit"
 				/>
 			</form>
-			<div style="display:none;visibility:hidden;position:absolute;left:-10000px">
-				<a id="success" href="https://payment/success"></a>
-				<a id="cancel" href="https://payment/canceled"></a>
-			</div>
 		<script>
 			console.log('in start of script')
 			var stripe = Stripe('${key}');
@@ -209,9 +205,8 @@ export function stripeCheckoutRedirectHTML(key, price) {
 				    				document.getElementById('submit').value="Processing...";
 				                    
 				                    window.ReactNativeWebView.postMessage(JSON.stringify(result));
-				                    document.getElementById("success").click();
 			                	}
-			                	document.getElementById("cancel").click()
+
 				            }).catch(e => {
 				            	let displayErrr = document.getElementById('card-errors');
 				            	// displayErrr.innerHTML = "errrrrrrr "+JSON.stringify(e)
@@ -221,4 +216,132 @@ export function stripeCheckoutRedirectHTML(key, price) {
 		</body>
 	</html>
   `;
+}
+
+export function success() {
+	return `
+		<!DOCTYPE html>
+		<html>
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+				<style>
+					.success-animation { margin:150px auto;}
+
+					.checkmark {
+					    width: 100px;
+					    height: 100px;
+					    border-radius: 50%;
+					    display: block;
+					    stroke-width: 2;
+					    stroke: #4bb71b;
+					    stroke-miterlimit: 10;
+					    box-shadow: inset 0px 0px 0px #4bb71b;
+					    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+					    position:relative;
+					    top: 5px;
+					    right: 5px;
+					   margin: 0 auto;
+					}
+					.checkmark__circle {
+					    stroke-dasharray: 166;
+					    stroke-dashoffset: 166;
+					    stroke-width: 2;
+					    stroke-miterlimit: 10;
+					    stroke: #4bb71b;
+					    fill: #fff;
+					    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+					 
+					}
+
+					.checkmark__check {
+					    transform-origin: 50% 50%;
+					    stroke-dasharray: 48;
+					    stroke-dashoffset: 48;
+					    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+					}
+
+					@keyframes stroke {
+					    100% {
+					        stroke-dashoffset: 0;
+					    }
+					}
+
+					@keyframes scale {
+					    0%, 100% {
+					        transform: none;
+					    }
+
+					    50% {
+					        transform: scale3d(1.1, 1.1, 1);
+					    }
+					}
+
+					@keyframes fill {
+					    100% {
+					        box-shadow: inset 0px 0px 0px 30px #4bb71b;
+					    }
+					}
+					.text {
+						margin-top: -40px;
+						color: #4bb71b;
+						font-size: 150%;
+						font-weight: bold
+					}
+				</style>
+			</head>
+			<body>
+				<div class="success-animation">
+					<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
+				</div>
+				<center>
+					<div class="text">
+						Payment Successful
+					</div>
+				</center>
+			</body>
+		</html>
+	`;
+}
+
+export function failure() {
+	return `
+		<!DOCTYPE html>
+		<html>
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+				<style>
+					.ui-error {
+						transform: scale(.5);
+					}
+					.text {
+						margin-top: -40px;
+						color: #f97474;
+						font-size: 150%;
+						font-weight: bold
+					}
+				</style>	
+			</head>
+			<body>
+				<div class="ui-error">
+					<svg  viewBox="0 0 87 87" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+								<g id="Group-2" transform="translate(2.000000, 2.000000)">
+									<circle id="Oval-2" stroke="rgba(252, 191, 191, .5)" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+									<circle  class="ui-error-circle" stroke="#f97474" stroke-width="4" cx="41.5" cy="41.5" r="41.5"></circle>
+										<path class="ui-error-line1" d="M22.244224,22 L60.4279902,60.1837662" id="Line" stroke="#f97474" stroke-width="3" stroke-linecap="square"></path>
+										<path class="ui-error-line2" d="M60.755776,21 L23.244224,59.8443492" id="Line" stroke="#f97474" stroke-width="3" stroke-linecap="square"></path>
+								</g>
+						</g>
+					</svg>
+				</div>
+				<center>
+					<div class="text">
+						Payment failed
+					</div>
+				</center>
+			</body>
+		</html>
+	`;
 }

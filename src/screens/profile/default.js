@@ -6,8 +6,7 @@ import {
     Image,
     BackHandler,
     TouchableOpacity,
-    ScrollView,
-    SafeAreaView
+    ScrollView
 } from 'react-native';
 import {
     Header,
@@ -71,7 +70,7 @@ export default function Profile({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <SafeAreaView style={{ flex: 1 }}>
+            
                 <ScrollView>
                     <Text style={stylesCtm.heading}>My profile</Text>
                     <View style={{ padding: 20 }}>
@@ -135,7 +134,7 @@ export default function Profile({ navigation }) {
                         </Button>
                     </View>
                 </ScrollView>
-            </SafeAreaView>
+            
         </React.Fragment>
     );
 }

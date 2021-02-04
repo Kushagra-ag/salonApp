@@ -3,7 +3,6 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import axios from 'axios';
 import { registerForPushNotificationsAsync } from './notifMethods.js';
-import { clearNotificationToken } from './miscMethods.js';
 import { API } from './config.js';
 
 const options = {
@@ -28,12 +27,13 @@ export const profileCheck = async () => {
 
 export const login = async (data, success, failure) => {
     const token = await registerForPushNotificationsAsync();
-
+    console.log("token - ", token);
+    
     data = { ...data, notificationId: token };
     try {
         axios
             .post(`${API}accounts/login`, data, {
-                header: options
+                headers: options
             })
             .then(res => {
                 console.log(res.data);
@@ -58,13 +58,16 @@ export const login = async (data, success, failure) => {
     }
 };
 
-export const register = (data, success, failure) => {
+export const register = async (data, success, failure) => {
     try {
+        const token = await registerForPushNotificationsAsync();
+        data = { ...data, notificationId: token };
+
         console.log('from register method - ', data);
 
         axios
             .post(`${API}accounts/signup`, data, {
-                header: options
+                headers: options
             })
             .then(res => {
                 console.log(res.data);
@@ -92,23 +95,35 @@ export const logout = async next => {
     try {
         console.log('in logout method');
 
-        const profile = await profileCheck();
-        const { token } = profile;
+        const { token } = await profileCheck();
 
         await AsyncStorage.removeItem('@e_beauty__acc');
-        // axios
-        // 	.delete(`${API}accounts/signup`, data, {
-        // 		header: options
-        // 	})
-        // 	.then(res => {
-        // 		next();
-        // 	})
-        // 	.catch(e => {
-        // 		console.log(e)
-        // 	})
+        
+        clearNotificationToken(token, next);
 
-        next();
+        // next();
     } catch (e) {
         console.log(e);
     }
+};
+
+export const clearNotificationToken = (token, next) => {
+    
+    console.log('in clearNotificationToken method')
+    axios
+        .post(`${API}accounts/clearnotification`, null, {
+                headers: {
+                    ...options,
+                    'authorization': token
+                }
+            })
+            .then(res => {
+                next();
+            })
+            .catch(e => {
+                console.log(e)
+                return null
+            })
+
+
 };

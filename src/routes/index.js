@@ -3,12 +3,14 @@ import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Container, Content, Text, StyleProvider, Root } from 'native-base';
+import Geocoder from 'react-native-geocoding';
 import * as Font from 'expo-font';
 import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/commonColor.js';
 import Auth from '../screens/auth/index.js';
 import AppScreens from '../screens/index.js';
 
+Geocoder.init('AIzaSyBov-hgk72VmzPEXpUtzZHvvzFwf7rqhco');
 const Stack = createStackNavigator();
 
 function myStack() {

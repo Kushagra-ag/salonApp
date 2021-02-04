@@ -88,10 +88,12 @@ export default function Register({ navigation }) {
                 password: '',
                 repeatPassword: ''
             });
+            setLoading(false)
         }
 
         function success() {
             setErr('');
+            setLoading(false);
             navigation.replace('App', {
                 screen: 'Home'
             });
@@ -192,6 +194,7 @@ export default function Register({ navigation }) {
                         <Button
                             primary
                             block
+                            disabled={loading ? true : false}
                             style={stylesCtm.primaryBtn}
                             onPress={onSubmit}
                         >

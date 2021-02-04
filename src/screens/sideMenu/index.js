@@ -5,8 +5,7 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView,
-    SafeAreaView
+    ScrollView
 } from 'react-native';
 import {
     Col,
@@ -79,7 +78,6 @@ export default function Cart({ navigation }) {
                     </Body>
                     <Right />
                 </Header>
-                <SafeAreaView style={{ flex: 1 }}>
                     <ScrollView>
                         <View style={{ paddingVertical: 20 }}>
                             <View style={styles.headerView}>
@@ -117,7 +115,6 @@ export default function Cart({ navigation }) {
                             </Button>
                         </View>
                     </ScrollView>
-                </SafeAreaView>
             </React.Fragment>
         )
     );

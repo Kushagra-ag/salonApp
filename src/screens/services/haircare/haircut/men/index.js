@@ -14,11 +14,17 @@ import {
     ListItem
 } from 'native-base';
 import stylesCtm from '../../../../../styles';
-import { alertBox, fetchProduct } from '../../../../../methods/cartMethods.js';
+import CustomDialog from '../../../../../components/CustomDialog.js';
+import { fetchProduct } from '../../../../../methods/cartMethods.js';
 import serviceId from '../../../services.json';
 
 export default function WomenHaircare({ navigation }) {
     const [services, addServices] = useState([]);
+    const [curService, setCurService] = useState({
+        title: '',
+        id: ''
+    });
+    const [visible, setVisible] = useState(false);
 
     const handleServices = res => addServices(services => [...services, res]);
 
@@ -50,6 +56,11 @@ export default function WomenHaircare({ navigation }) {
                 <Right />
             </Header>
             <ScrollView>
+                <CustomDialog
+                    visible={visible}
+                    setVisible={setVisible}
+                    service={curService}
+                />
                 <Text style={stylesCtm.heading}>
                     What kind of Mens' haircut do you need today?
                 </Text>
@@ -61,9 +72,13 @@ export default function WomenHaircare({ navigation }) {
                                     <ListItem
                                         thumbnail
                                         key={item._id}
-                                        onPress={e =>
-                                            alertBox(e, item._id, item.title)
-                                        }
+                                        onPress={() => {
+                                            setVisible(true);
+                                            setCurService({
+                                                title: item.title,
+                                                id: item._id
+                                            });
+                                        }}
                                     >
                                         <Left>
                                             <Thumbnail

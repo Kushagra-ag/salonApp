@@ -9,12 +9,15 @@ import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/commonColor.js';
 import Auth from '../screens/auth/index.js';
 import AppScreens from '../screens/index.js';
+import { profileCheck } from '../methods/authMethods.js';
+import { navigationRef } from '../methods/authMethods.js';
 
 Geocoder.init('AIzaSyBov-hgk72VmzPEXpUtzZHvvzFwf7rqhco');
 const Stack = createStackNavigator();
 
 function myStack() {
     const [font, setFont] = useState(false);
+    const [route, setRoute] = useState('Auth');
 
     async function loadFont(isCancelled) {
         if (!isCancelled) {
@@ -29,8 +32,20 @@ function myStack() {
 
     useEffect(() => {
         let isCancelled = false;
-        loadFont(isCancelled);
-        LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+
+        profileCheck()
+            .then(res => {
+                if (res) {
+                    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+                    setRoute('App');
+                }
+
+                loadFont(isCancelled);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+
         return () => {
             isCancelled = true;
             console.log('return from index-routes');
@@ -40,8 +55,8 @@ function myStack() {
     return font ? (
         <Root>
             <StyleProvider style={getTheme(material)}>
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Auth" headerMode="none">
+                <NavigationContainer ref={navigationRef}>
+                    <Stack.Navigator initialRouteName={route} headerMode="none">
                         <Stack.Screen name="Auth" component={Auth} />
                         <Stack.Screen name="App" component={AppScreens} />
                     </Stack.Navigator>

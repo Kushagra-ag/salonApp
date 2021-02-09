@@ -1,12 +1,12 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
+    "start": "npm run poststart && expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "poststart": "rm -rf node_modules/expo/node_modules/react-native-safe-area-context"
+    "prepublish": "rm -rf node_modules/expo/node_modules/react-native-safe-area-context"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
@@ -32,10 +32,10 @@
     "react-native-geocoding": "^0.4.0",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-maps": "^0.27.1",
+    "react-native-safe-area-context": "3.1.4",
     "react-native-maps-directions": "^1.8.0",
     "react-native-paper": "^4.4.1",
     "react-native-reanimated": "^1.13.2",
-    "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
     "react-native-unimodules": "^0.11.0",
     "react-native-web": "~0.13.12",

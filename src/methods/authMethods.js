@@ -1,9 +1,10 @@
+import { createRef } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import axios from 'axios';
 import { registerForPushNotificationsAsync } from './notifMethods.js';
 import { API } from './config.js';
+
+export const navigationRef = createRef();
 
 const options = {
     'content-type': 'application/json'
@@ -18,19 +19,20 @@ export const profileCheck = async () => {
             profile = await JSON.parse(profile);
             return profile;
         }
-
-        return null;
+        console.log('erratic', profile)
+        return null
     } catch (e) {
-        return null;
+        return logout();
     }
 };
 
 export const login = async (data, success, failure) => {
     const token = await registerForPushNotificationsAsync();
-    console.log("token - ", token);
-    
+    console.log('token - ', token);
+
     data = { ...data, notificationId: token };
-    try {
+    console.log(data);
+    
         axios
             .post(`${API}accounts/login`, data, {
                 headers: options
@@ -51,15 +53,12 @@ export const login = async (data, success, failure) => {
             })
             .catch(err => {
                 failure(err);
-                console.log('error - ', JSON.stringify(err));
+                console.log('error - ', JSON.stringify(err.response.data));
             });
-    } catch (e) {
-        return null;
-    }
+    
 };
 
 export const register = async (data, success, failure) => {
-    try {
         const token = await registerForPushNotificationsAsync();
         data = { ...data, notificationId: token };
 
@@ -86,20 +85,20 @@ export const register = async (data, success, failure) => {
             .catch(err => {
                 console.log('error - ', err);
             });
-    } catch (e) {
-        return null;
-    }
+
 };
 
-export const logout = async next => {
+export const logout = async () => {
     try {
         console.log('in logout method');
 
-        const { token } = await profileCheck();
+        if (AsyncStorage.getItem('@e_beauty__acc')) {
+            const { token } = await profileCheck();
 
-        await AsyncStorage.removeItem('@e_beauty__acc');
-        
-        clearNotificationToken(token, next);
+            await AsyncStorage.removeItem('@e_beauty__acc');
+
+            clearNotificationToken(token);
+        } else resetToAuth()
 
         // next();
     } catch (e) {
@@ -107,23 +106,36 @@ export const logout = async next => {
     }
 };
 
-export const clearNotificationToken = (token, next) => {
-    
-    console.log('in clearNotificationToken method')
+export const clearNotificationToken = async token => {
+    console.log('in clearNotificationToken method');
     axios
         .post(`${API}accounts/clearnotification`, null, {
-                headers: {
-                    ...options,
-                    'authorization': token
+            headers: {
+                ...options,
+                authorization: token
+            }
+        })
+        .then(res => {
+            resetToAuth();
+            return null;
+        })
+        .catch(e => {
+            console.log(e);
+            return null;
+        });
+};
+
+export const resetToAuth = () => {console.log('in resettoauth')
+    navigationRef.current?.reset({
+        index: 0,
+        routes: [
+            {
+                name: 'Auth',
+                params: {
+                    screen: 'Login',
+                    message: 'Your session expired. Please login to continue'
                 }
-            })
-            .then(res => {
-                next();
-            })
-            .catch(e => {
-                console.log(e)
-                return null
-            })
-
-
+            }
+        ]
+    });
 };

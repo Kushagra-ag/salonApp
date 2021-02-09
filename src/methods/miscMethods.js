@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API } from './config.js';
-import { profileCheck } from './authMethods.js';
+import { profileCheck, logout } from './authMethods.js';
 
 const options = {
     'content-type': 'application/json'
@@ -88,6 +88,8 @@ export const placeOrder = async (data, success) => {
     axios(config)
         .then(function (res) {
             console.log('aaaaaaaa', res.data);
+            if (res.data.authError) return logout();
+            
             success(res.data);
         })
         .catch(function (error) {
@@ -100,13 +102,13 @@ export const orderStatus = async (data, success) => {
 
     const { token } = await profileCheck();
     console.log('data', JSON.stringify(data));
-    
+
     let config = {
         method: 'post',
         url: `${API}orderStatus`,
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': token
+            Authorization: token
         },
         data: JSON.stringify(data)
     };
@@ -115,15 +117,42 @@ export const orderStatus = async (data, success) => {
         .then(function (res) {
             console.log('aaaabbb', res.data);
             // return res.data
-            success(res.data)
+            if (res.data.authError) return logout();
+
+            success(res.data);
         })
         .catch(function (error) {
             console.log('err1', error);
         });
 };
 
-export const getOrders = async (handleOrders) => {
+export const getOrder = async (id, success, failure) => {
+    const { token } = await profileCheck();
 
+    axios
+        .get(`${API}accounts/orders/${id}`, {
+            headers: {
+                ...options,
+                Authorization: token
+            }
+        })
+        .then(res => {
+
+            if (res.data.authError) return logout();
+
+            if (res.data.success) {
+                const cart = res.data.order.products;
+                console.log('from getordeR', res.data);
+
+                success(cart, res.data.order.totalPrice);
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+export const getOrders = async handleOrders => {
     const { token } = await profileCheck();
 
     axios
@@ -134,16 +163,21 @@ export const getOrders = async (handleOrders) => {
             }
         })
         .then(res => {
-            console.log(res.data);
-            
-            res.data.orders.forEach(order => {
-                handleOrders(order)
-            })
+            console.log('ssss', res.data);
+
+            if (res.data.authError) return logout();
+
+            if (res.data.success) {
+                res.data.orders.forEach(order => {
+                    handleOrders(order);
+                });
+                return;
+            }
         })
         .catch(err => {
             console.log(err);
-        })  
-}
+        });
+};
 
 export const searchService = (str, next) => {
     axios

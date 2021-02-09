@@ -1,6 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Image, StyleSheet, SafeAreaView, Platform } from 'react-native';
-import { StackActions, CommonActions } from 'react-navigation';
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    SafeAreaView,
+    Platform
+} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
@@ -26,24 +32,18 @@ const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 function CustomDrawerContentAndroid(props) {
-    const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
         profileCheck()
             .then(res => {
-                // console.log('from ctmdrwrcomp - ', res);
                 if (res) {
-                    // res = JSON.parse(res);
-                    console.log('res - ', res.user);
                     setProfile(res.user);
-                    setLoading(false);
                 } else {
                     props.navigation.reset({
                         index: 0,
                         routes: [{ name: 'Auth' }]
                     });
-                    return;
                 }
             })
             .catch(e => {
@@ -52,12 +52,10 @@ function CustomDrawerContentAndroid(props) {
                     index: 0,
                     routes: [{ name: 'Auth' }]
                 });
-                return;
             });
     }, []);
 
     return (
-        !loading &&
         Boolean(profile) && (
             <DrawerContentScrollView {...props}>
                 <View style={stylesCtm.sidebarContainer}>
@@ -161,6 +159,32 @@ function CustomDrawerContentAndroid(props) {
 export default function Screens({ navigation }) {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
+    const responseListener = useRef();
+
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: false,
+            shouldSetBadge: false
+        }),
+        handleSuccess: id => handleSuccessNotif(id)
+    });
+
+    const handleSuccessNotif = notificationId => {
+        console.log('success methoooood', notificationId);
+        // navigation.navigate('Request');
+    };
+
+    const handleNotifResponse = response => {
+        // console.log('notification clicked', response);
+        console.log('-----------', response.notification.request.content.data);
+        // navigation.navigate('Request', {
+        //     screen: 'Index',
+        //     params: {
+        //         notification: response.notification.request.content.data
+        //     }
+        // });
+    };
 
     useEffect(() => {
         notificationListener.current = Notifications.addNotificationReceivedListener(
@@ -170,9 +194,13 @@ export default function Screens({ navigation }) {
             }
         );
 
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(
+            handleNotifResponse
+        );
+
         return () => {
             Notifications.removeNotificationSubscription(notificationListener);
-            // Notifications.removeNotificationSubscription(responseListener);
+            Notifications.removeNotificationSubscription(responseListener);
         };
     }, []);
 

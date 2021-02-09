@@ -122,8 +122,9 @@ export default function tracking({ navigation, route }) {
 	};
 
 	const confirmOrder = async () => {
-
-		const cart = await getCart();
+		console.log('in confirm order')
+		console.log(route.params)
+		const cart = route.params.repeatCart || await getCart()
 
 		const data = {
 			customerLocation: `[${position.latitude}, ${position.longitude}]`,

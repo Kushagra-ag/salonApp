@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         color: '#fff'
     },
+    lightButtonText: {
+        color: '#666'
+    },
     mapContainer: {
         position: 'absolute',
         width: '100%',

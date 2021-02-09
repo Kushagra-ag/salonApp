@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+import React, { useState } from 'react';
+import { useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
 import {
@@ -28,6 +28,8 @@ import { profileCheck, login } from '../../methods/authMethods.js';
 import axios from 'axios';
 
 export default function Login({ navigation }) {
+    const route = useRoute();
+
     const [cred, setCred] = useState({
         email: 'test@test.com',
         password: 'test'
@@ -69,18 +71,6 @@ export default function Login({ navigation }) {
 
         login(cred, success, failure);
     };
-
-    useEffect(() => {
-        profileCheck().then(profile => {
-            console.log(profile);
-
-            if (profile) {
-                navigation.replace('App', {
-                    screen: 'Home'
-                });
-            }
-        });
-    }, []);
 
     return (
         <Container style={stylesCtm.container}>

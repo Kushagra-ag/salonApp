@@ -23,10 +23,12 @@ export default function CustomDialog(props) {
 	}, []);
 
 	return (
+		// <View style={{backgroundColor:"#00000055", height:height, width: width, display:props.visible?'flex':'none'}} >
 		<Modal
 			visible={props.visible}
 			animationType="none"
 			transparent={true}
+			statusBarTranslucent={true}
 			onRequestClose={() => props.setVisible(false)}
 		>
 			<View style={styles.modalContainer}>
@@ -72,6 +74,7 @@ export default function CustomDialog(props) {
 				</View>
 			</View>
 		</Modal>
+		// </View>
 	);
 }
 

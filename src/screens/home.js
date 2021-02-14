@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
+    ActivityIndicator,
     StyleSheet,
     View,
     Text,
     Image,
-    TouchableOpacity,
+    Pressable,
     ScrollView,
     SafeAreaView,
     Dimensions
@@ -35,10 +36,10 @@ import {
     useFocusEffect
 } from '@react-navigation/native';
 import BottomNav from '../components/BottomNav.js';
+import { AddToCartModal } from '../components/modals.js';
 import Login from './auth/login.js';
 import Register from './auth/register.js';
 import stylesCtm from '../styles';
-import { alertBox } from '../methods/cartMethods.js';
 import { searchService } from '../methods/miscMethods.js';
 
 const { width, height } = Dimensions.get('window');
@@ -47,6 +48,8 @@ export default function Home({ navigation }) {
     const [view, setView] = useState(false);
     const [searchQuery, updateSearchQuery] = useState('');
     const [searchRes, updateSearchRes] = useState([]);
+    const [visible, setVisible] = useState(false);
+    const [curService, setCurService] = useState({});
 
     const handleSearchResults = async hits => {
         await updateSearchRes([]);
@@ -92,13 +95,21 @@ export default function Home({ navigation }) {
                 <Right />
             </Header>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+            >
+                <AddToCartModal
+                    visible={visible}
+                    setVisible={setVisible}
+                    service={curService}
+                />
                 <View>
                     <Text style={stylesCtm.heading}>
                         What can we help you with today?
                     </Text>
                 </View>
-                <View style={{ paddingHorizontal: 20 }}>
+                <View style={{ paddingHorizontal: 10 }}>
                     <Item style={styles.search}>
                         <Icon active name="search" />
                         <Input
@@ -116,9 +127,13 @@ export default function Home({ navigation }) {
                                     <ListItem
                                         key={item._id}
                                         thumbnail
-                                        onPress={e =>
-                                            alertBox(e, item._id, item.title)
-                                        }
+                                        onPress={e => {
+                                            setVisible(true);
+                                            setCurService({
+                                                title: item.title,
+                                                id: item._id
+                                            });
+                                        }}
                                     >
                                         <Left>
                                             <Thumbnail
@@ -134,11 +149,13 @@ export default function Home({ navigation }) {
                                             </Text>
                                         </Body>
                                         <Right>
-                                            <Text> {`\$${item.price}`} </Text>
+                                            <Text style={{ fontWeight: 'bold' }}> {`\$${item.price}`} </Text>
                                         </Right>
                                     </ListItem>
                                 ))
-                            ) : null
+                            ) : (
+                                <ActivityIndicator size="small" color="#000" />
+                            )
                         ) : (
                             <React.Fragment>
                                 <ListItem
@@ -216,7 +233,7 @@ export default function Home({ navigation }) {
                 </View>
                 {Boolean(!searchQuery) && (
                     <View style={{ paddingHorizontal: 20 }}>
-                        <TouchableOpacity
+                        <Pressable
                             onPress={() =>
                                 navigation.navigate('Services', {
                                     screen: 'Index'
@@ -231,7 +248,7 @@ export default function Home({ navigation }) {
                             >
                                 View all
                             </Text>
-                        </TouchableOpacity>
+                        </Pressable>
                     </View>
                 )}
                 <View>
@@ -243,7 +260,7 @@ export default function Home({ navigation }) {
                     showsHorizontalScrollIndicator={false}
                     style={styles.horizontallScrollContainer}
                 >
-                    <TouchableOpacity
+                    <Pressable
                         style={styles.imgContainer}
                         onPress={() => {
                             console.log('presss');
@@ -261,8 +278,8 @@ export default function Home({ navigation }) {
                             source={require('../../assets/app/haircutmen.jpg')}
                         />
                         <Text>Boys haircut 2020</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                    </Pressable>
+                    <Pressable
                         style={styles.imgContainer}
                         onPress={() =>
                             navigation.navigate('Services', {
@@ -278,9 +295,9 @@ export default function Home({ navigation }) {
                             source={require('../../assets/app/haircutwomen.jpg')}
                         />
                         <Text>Hairstyle 2020</Text>
-                    </TouchableOpacity>
+                    </Pressable>
 
-                    <TouchableOpacity
+                    <Pressable
                         style={styles.imgContainer}
                         onPress={() => {
                             console.log('presss');
@@ -298,8 +315,8 @@ export default function Home({ navigation }) {
                             source={require('../../assets/app/haircutmen.jpg')}
                         />
                         <Text>Boys haircut 2020</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
+                    </Pressable>
+                    <Pressable
                         style={styles.imgContainer}
                         onPress={() =>
                             navigation.navigate('Services', {
@@ -315,7 +332,7 @@ export default function Home({ navigation }) {
                             source={require('../../assets/app/haircutwomen.jpg')}
                         />
                         <Text>Hairstyle 2020</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                 </ScrollView>
             </ScrollView>
             <BottomNav />

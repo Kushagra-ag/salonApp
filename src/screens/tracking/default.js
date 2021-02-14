@@ -142,6 +142,7 @@ export default function tracking({ navigation, route }) {
 		console.log('from placorder - default - ',res.order._id);
 
 		navigation.navigate('WaitScreen', {
+			totalPrice: route.params.price,
 			orderId: res.order._id,
 			orderCreated: res.order.created,
 			timeout: res.order.timeout,

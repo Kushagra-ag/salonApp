@@ -13,10 +13,11 @@ import {
 import { Header, Left, Right, Body, Title, Button, Icon } from 'native-base';
 import axios from 'axios';
 
-const PurchaseProduct = ({ route, navigation }) => {
+export default function PurchaseProduct(props)  {
 
     const [loading, setLoading] = useState(true);
     const [webPage, setWebPage] = useState('stripeCheckoutRedirectHTML');
+    const [secret, setSecret] = useState(null);
 
     useEffect(() => {
         setLoading(false);
@@ -31,20 +32,38 @@ const PurchaseProduct = ({ route, navigation }) => {
     const onMessage = async event => {
         const { data } = event.nativeEvent;
         console.log('data from on message - ', data);
+        console.log('-------------------------')
+        console.log('-------------------------')
+        console.log(webPage)
 
-        const cart = {
-            products: await getCart(),
-            totalPrice: route.params.price
-        };
+        if(webPage === "stripeCheckoutRedirectHTML") {
 
-        payment(data, cart, setWebPage)
+            const cart = {
+                products: await getCart(),
+                totalPrice: props.price
+            };
+
+            // setWebPage("success")
+
+            // const {client_secret} = await payment(data);
+            // console.log(client_secret);
+            // setSecret(client_secret);
+
+
+            payment(data, cart, setWebPage)
+        } else if(webPage === "success") {
+
+            console.log("in success")
+            props.trackingScreen();
+        }
+        
     };
 
     return (
         <React.Fragment>
             <Header>
                 <Left>
-                    <Button transparent onPress={() => navigation.goBack()}>
+                    <Button transparent onPress={() => props.navigation.goBack()}>
                         <Icon name="arrow-back" style={{ fontSize: 24 }} />
                     </Button>
                 </Left>
@@ -62,8 +81,8 @@ const PurchaseProduct = ({ route, navigation }) => {
                             webPage === 'stripeCheckoutRedirectHTML'
                                 ? stripeCheckoutRedirectHTML(
                                       STRIPE.PUBLIC_KEY,
-                                      route.params.price
-                                  )
+                                      props.price)
+                                  
                                 : webPage === 'success'
                                 ? success()
                                 : failure()
@@ -86,5 +105,3 @@ const PurchaseProduct = ({ route, navigation }) => {
         </React.Fragment>
     );
 };
-
-export default PurchaseProduct;

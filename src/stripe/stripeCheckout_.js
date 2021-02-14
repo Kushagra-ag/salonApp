@@ -3,7 +3,7 @@
  * @param {String} userID
  * @returns {String}
  */
-export function stripeCheckoutRedirectHTML(key, price) {
+export function stripeCheckoutRedirectHTML(key, price, secret) {
 	// border: 1px solid transparent;
 	//  border-radius: 4px;
 	//  background-color: white;
@@ -134,6 +134,9 @@ export function stripeCheckoutRedirectHTML(key, price) {
 					type="submit"
 				/>
 			</form>
+
+			<div id="payment-request-button">
+			</div>
 		<script>
 			console.log('in start of script')
 			var stripe = Stripe('${key}');
@@ -149,6 +152,67 @@ export function stripeCheckoutRedirectHTML(key, price) {
 
 			// var card = elements.create("card", { style: style });
 
+			// ------------GPay option ----------------------
+
+			var paymentRequest = stripe.paymentRequest({
+			  country: 'US',
+			  currency: 'usd',
+			  total: {
+			    label: 'Demo total',
+			    amount: 1099,
+			  },
+			  requestPayerName: true,
+			  requestPayerEmail: true,
+			});
+
+			var prButton = elements.create('paymentRequestButton', {
+			  paymentRequest: paymentRequest,
+			});
+
+			paymentRequest.canMakePayment().then(function(result) {
+			  if (result) {
+			    prButton.mount('#payment-request-button');
+			  } else {
+			    document.getElementById('payment-request-button').style.display = 'none';
+			  }
+			});
+
+			paymentRequest.on('paymentmethod', function(ev) {
+			  // Confirm the PaymentIntent without handling potential next actions (yet).
+			  stripe.confirmCardPayment(
+			    clientSecret,
+			    {payment_method: ev.paymentMethod.id},
+			    {handleActions: false}
+			  ).then(function(confirmResult) {
+			    if (confirmResult.error) {
+			      // Report to the browser that the payment failed, prompting it to
+			      // re-show the payment interface, or show an error message and close
+			      // the payment interface.
+			      ev.complete('fail');
+			    } else {
+			      // Report to the browser that the confirmation was successful, prompting
+			      // it to close the browser payment method collection interface.
+			      ev.complete('success');
+			      
+			      if (confirmResult.paymentIntent.status === "requires_action") {
+			        // Let Stripe.js handle the rest of the payment flow.
+			        stripe.confirmCardPayment(clientSecret).then(function(result) {
+			          if (result.error) {
+			            // The payment failed -- ask your customer for a new payment method.
+			          } else {
+			            // The payment has succeeded.
+			          }
+			        });
+			      } else {
+			        // The payment has succeeded.
+			      }
+			    }
+			  });
+			});
+
+			// --------------------------------------------------------------------
+
+			
 			var cardNumber = elements.create("cardNumber", { style: style, showIcon: true, iconStyle: 'solid' });
 			var cardExpiry = elements.create("cardExpiry", { style: style });
 			var cardCvc = elements.create("cardCvc", { style: style });
@@ -173,7 +237,7 @@ export function stripeCheckoutRedirectHTML(key, price) {
 
 			var form = document.getElementById('payment-form');
 
-			form.addEventListener('submit', function(event) {
+			form.addEventListener('submit', async function(event) {
 			    event.preventDefault();
 	            const name = document.getElementById('name').value;
 			    const postalCode = document.getElementById('postal-code').value;
@@ -203,8 +267,32 @@ export function stripeCheckoutRedirectHTML(key, price) {
 				                	
 				                	document.getElementById('submit').disabled = true;
 				    				document.getElementById('submit').value="Processing...";
+
+				    				// ---------------------------
+				    				// call payment intent api to gey client_secret
+				    				// let xhr = new XMLHttpRequest();
+									// xhr.open('POST', 'http://ebeauty-env.eba-gtswwx6z.ap-south-1.elasticbeanstalk.com/api/paymentIntent');
 				                    
-				                    window.ReactNativeWebView.postMessage(JSON.stringify(result));
+				                    // -----------------------------
+
+				                    stripe.confirmCardPayment('pi_1IJcmoIEMWw89BeAgodmb1wt_secret_kcIuHvUTHKDNw68tZRUBegsSz', {
+								      payment_method: {
+								        card: cardNumber,
+								        billing_details: {
+								          name: name
+								        }
+								      },
+								      setup_future_usage: 'off_session'
+								    })
+								    .then(res => {
+
+								    	document.getElementById('submit').disabled = false;
+								      // console.log('confirmCardPayment response- ',res)
+								      window.ReactNativeWebView.postMessage(JSON.stringify(res))
+								    })
+
+
+				                    // window.ReactNativeWebView.postMessage(JSON.stringify(result));
 			                	}
 
 				            }).catch(e => {
@@ -226,6 +314,29 @@ export function success() {
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 				<style>
+					.StripeElement {
+						box-sizing: border-box;
+
+						
+
+						padding: 12px;
+					}
+
+					.StripeElement--webkit-autofill {
+						background-color: #fefde5 !important;
+					}
+
+					button {
+						background-color: #000;
+						margin-top: 20px;
+						font-weight: bold;
+						font-size: 110%;
+						border: none;
+						border-radius: 4px;
+						-webkit-appearance: none;
+						-moz-appearance: none;
+						appearance: none;
+					}
 					.success-animation { margin:150px auto;}
 
 					.checkmark {
@@ -298,7 +409,18 @@ export function success() {
 					<div class="text">
 						Payment Successful
 					</div>
+					<button
+						class="StripeElement"
+						style="color: #fff; width: 80%;"
+						
+					>
+						Proceed
+					</button>
 				</center>
+				<script>
+				document.querySelector(".StripeElement").addEventListener('click', function(){window.ReactNativeWebView.postMessage("Msg from success page")})
+					
+				</script>
 			</body>
 		</html>
 	`;

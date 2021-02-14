@@ -24,7 +24,7 @@ import {
 } from 'native-base';
 import stylesCtm from '../../../styles';
 import { fetchProduct } from '../../../methods/cartMethods.js';
-import CustomDialog from '../../../components/CustomDialog.js';
+import { AddToCartModal } from '../../../components/modals.js';
 import serviceId from '../services.json';
 
 export default function Haircare({ navigation, route }) {
@@ -79,8 +79,8 @@ export default function Haircare({ navigation, route }) {
                 </Body>
                 <Right />
             </Header>
-            <ScrollView>
-                <CustomDialog
+            <ScrollView keyboardShouldPersistTaps="handled">
+                <AddToCartModal
                     visible={visible}
                     setVisible={setVisible}
                     service={curService}

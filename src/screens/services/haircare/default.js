@@ -54,7 +54,7 @@ export default function Haircare({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-                <ScrollView>
+                <ScrollView keyboardShouldPersistTaps="handled">
                     <View>
                         <Text style={stylesCtm.heading}>
                             What kind of Haircare do you need today?

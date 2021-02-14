@@ -3,7 +3,8 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    StyleSheet
 } from 'react-native';
 import {
     Col,
@@ -29,29 +30,33 @@ import { useFocusEffect } from '@react-navigation/native';
 import stylesCtm from '../../styles';
 import BottomNav from '../../components/BottomNav.js';
 import {
-    alertBoxRemove,
     fetchProduct,
-    getCart
+    getCart,
+    alertBoxDelete
 } from '../../methods/cartMethods.js';
+import { RemoveFromCartModal } from '../../components/modals.js';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function Cart({ navigation }) {
     const [cartItems, setCartItems] = useState([]);
     const [amt, setAmt] = useState(0);
-    const [status, setStatus] = useState(0);
+    const [visible, setVisible] = useState(false);
+    const [curService, setCurService] = useState({});
+    const [cartChanged, setCartChanged] = useState(0);
 
     const populateCart = async res => {
         setCartItems(services => [...services, res]);
         setPrice(res.totalPrice, 'add');
     };
 
-    const removeItem = id => {
-        cartItems.forEach(async item => {
-            if (item._id === id) {
-                setCartItems(cartItems => cartItems.filter(_ => _ !== item));
-                setPrice(item.totalPrice, 'sub');
-            }
-        });
-    };
+    // const removeItem = id => {
+    //     cartItems.forEach(async item => {
+    //         if (item._id === id) {
+    //             setCartItems(cartItems => cartItems.filter(_ => _ !== item));
+    //             setPrice(item.totalPrice, 'sub');
+    //         }
+    //     });
+    // };
 
     const setPrice = (p, action) => {
         action === 'add'
@@ -71,7 +76,7 @@ export default function Cart({ navigation }) {
                     });
                 }
             });
-        }, [])
+        }, [cartChanged])
     );
 
     return (
@@ -81,24 +86,40 @@ export default function Cart({ navigation }) {
                 <Body>
                     <Title>Cart</Title>
                 </Body>
-                <Right />
+                <Right>
+                    <Button
+                        transparent
+                        onPress={() => alertBoxDelete(() => setCartItems([]))}
+                        disabled={Boolean(cartItems.length === 0)}
+                    >
+                        <MaterialIcons name="delete" size={24} color="#000" />
+                    </Button>
+                </Right>
             </Header>
-                <ScrollView>
-                    <Text style={stylesCtm.heading}>My Cart</Text>
-                    <View style={{ paddingVertical: 20 }}>
-                        <List>
-                            {cartItems.length > 0 &&
-                                cartItems.map(item => (
+            <ScrollView keyboardShouldPersistTaps="handled">
+                <RemoveFromCartModal
+                    visible={visible}
+                    setVisible={setVisible}
+                    service={curService}
+                    refreshCart={() => setCartChanged(!cartChanged)}
+                />
+                <Text style={stylesCtm.heading}>My Cart</Text>
+                <View style={{ paddingVertical: 20 }}>
+                    {cartItems.length > 0 ? (
+                        <React.Fragment>
+                            <List>
+                                {cartItems.map(item => (
                                     <ListItem
                                         thumbnail
                                         key={item._id}
-                                        onPress={e =>
-                                            alertBoxRemove(
-                                                e,
-                                                item._id,
-                                                item.title,
-                                                removeItem
-                                            )
+                                        onPress={e => {
+                                            setVisible(true);
+                                            setCurService({
+                                                title: item.title,
+                                                id: item._id,
+                                                qty: item.qty
+                                            });
+                                        }
                                         }
                                     >
                                         <Left>
@@ -127,41 +148,108 @@ export default function Cart({ navigation }) {
                                         </Right>
                                     </ListItem>
                                 ))}
+                                <ListItem thumbnail key="TotalAmt">
+                                    <Body>
+                                        <Text style={{ fontWeight: 'bold' }}>
+                                            Grand total
+                                        </Text>
+                                    </Body>
+                                    <Right>
+                                        <Text
+                                            style={{ fontWeight: 'bold' }}
+                                        >{`\$${amt}`}</Text>
+                                    </Right>
+                                </ListItem>
+                            </List>
 
-                            <ListItem thumbnail key="TotalAmt">
-                                <Body>
-                                    <Text style={{ fontWeight: 'bold' }}>
-                                        Grand total
-                                    </Text>
-                                </Body>
-                                <Right>
-                                    <Text
-                                        style={{ fontWeight: 'bold' }}
-                                    >{`\$${amt}`}</Text>
-                                </Right>
-                            </ListItem>
-                        </List>
-                        <Button
-                            dark
-                            block
-                            disabled={amt > 0 ? false : true}
-                            style={{ marginHorizontal: 40, marginVertical: 40 }}
-                            onPress={() =>
-                                navigation.navigate('Tracking', {
-                                    screen: 'Index',
-                                    params: {
-                                        price: amt
-                                    }
-                                })
-                            }
-                        >
-                            <Text style={stylesCtm.buttonText}>
-                                Proceed to checkout
+                            <Button
+                                dark
+                                block
+                                disabled={amt > 0 ? false : true}
+                                style={{
+                                    marginHorizontal: 40,
+                                    marginVertical: 40
+                                }}
+                                onPress={() =>
+                                    // navigation.navigate('Stripe', {
+                                    //     price: amt
+                                    // })
+                                    navigation.navigate('Tracking', {
+                                        screen: 'Index',
+                                        params: {
+                                            price: amt
+                                        }
+                                    })
+                                }
+                            >
+                                <Text style={stylesCtm.buttonText}>
+                                    Proceed to checkout
+                                </Text>
+                            </Button>
+                        </React.Fragment>
+                    ) : (
+                        <View style={styles.err}>
+                            <MaterialCommunityIcons
+                                name="cart-off"
+                                size={200}
+                                color="#607d8b44"
+                                style={{ paddingBottom: 30 }}
+                            />
+                            <Text style={{ color: '#000' }}>
+                                Your cart is empty
                             </Text>
-                        </Button>
-                    </View>
-                </ScrollView>
+                            <Button
+                                dark
+                                block
+                                style={{
+                                    marginHorizontal: 40,
+                                    marginVertical: 40
+                                }}
+                                onPress={() =>
+                                    navigation.navigate('Services', {
+                                        screen: 'Index'
+                                    })
+                                }
+                            >
+                                <Text style={stylesCtm.buttonText}>
+                                    Go to Services
+                                </Text>
+                            </Button>
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
             <BottomNav />
         </React.Fragment>
     );
 }
+
+const styles = StyleSheet.create({
+    address: {
+        fontSize: 15,
+        backgroundColor: '#ddd',
+        borderRadius: 5,
+        padding: 5,
+        paddingVertical: 20,
+        borderWidth: 0
+    },
+    err: {
+        flex: 1,
+        alignItems: 'center',
+        padding: 20
+    },
+    errBox: {
+        backgroundColor: '#607d8b11',
+        color: '#607d8b',
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        textAlign: 'center'
+    },
+    permDenied: {
+        flex: 1
+    },
+
+    localBtn: {
+        marginTop: 10
+    }
+});

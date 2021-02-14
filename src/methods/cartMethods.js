@@ -11,7 +11,7 @@ const options = {
 };
 
 export const addToCart = async (s, qty) => {
-    console.log('s-',s);
+    console.log('s-', s);
     try {
         const profile = await profileCheck();
         const {
@@ -20,22 +20,24 @@ export const addToCart = async (s, qty) => {
 
         let cart = await AsyncStorage.getItem(`@e_beauty_cart__${email}`);
         if (!cart) {
-            cart = [{id: s, qty: qty}]
+            cart = [{ id: s, qty: qty }];
         } else {
             console.log('whole cart - ', cart);
             cart = JSON.parse(cart);
             const uni = duplicateCheck(s, cart);
 
-            if (uni!=null) {
-
-                console.log("item found!")
+            if (uni != null) {
+                console.log('item found!');
                 cart[uni].id = s;
-                cart[uni].qty = qty
+                cart[uni].qty = qty;
             } else {
-                cart.push({id: s, qty: qty})
+                cart.push({ id: s, qty: qty });
             }
         }
-        await AsyncStorage.setItem(`@e_beauty_cart__${email}`, JSON.stringify(cart));
+        await AsyncStorage.setItem(
+            `@e_beauty_cart__${email}`,
+            JSON.stringify(cart)
+        );
 
         Toast.show({
             text: 'Service added to cart',
@@ -50,7 +52,7 @@ export const addToCart = async (s, qty) => {
     }
 };
 
-export const removeFromCart = async (s, next) => {
+export const removeFromCart = async (s) => {
     try {
         let profile = await profileCheck();
         const {
@@ -59,13 +61,13 @@ export const removeFromCart = async (s, next) => {
 
         let cart = await AsyncStorage.getItem(`@e_beauty_cart__${email}`);
         if (!cart) {
-            return
+            return;
         } else {
             // console.log(cart);
-            cart = JSON.parse(cart)
+            cart = JSON.parse(cart);
 
-            const index = cart.map(item => item.id).indexOf(s)
-            cart.splice(index, 1);          // delete cart[s]
+            const index = cart.map(item => item.id).indexOf(s);
+            cart.splice(index, 1); // delete cart[s]
 
             await AsyncStorage.setItem(
                 `@e_beauty_cart__${email}`,
@@ -77,7 +79,6 @@ export const removeFromCart = async (s, next) => {
                 buttonText: ''
             });
 
-            next(s);
         }
     } catch (e) {
         Toast.show({
@@ -134,6 +135,28 @@ export const alertBoxRemove = (e, s, service, next) => {
     );
 };
 
+export const alertBoxDelete = (next) => {
+    Alert.alert(
+        'Empty Cart',
+        `Are you sure you want to delete all items in your cart?`,
+        [
+            {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel'
+            },
+            {
+                text: 'Delete',
+                onPress: () => {
+                    console.log('Delete Pressed');
+                    deleteCart(next);
+                }
+            }
+        ],
+        { cancelable: true }
+    );
+};
+
 const duplicateCheck = (currentSer, arr) => {
     let flag = null;
 
@@ -141,11 +164,10 @@ const duplicateCheck = (currentSer, arr) => {
         if (service.id === currentSer) flag = idx;
     });
 
-    return flag
+    return flag;
 };
 
 export const getCart = async () => {
-    
     let profile = await profileCheck();
     const {
         user: { email }
@@ -162,6 +184,15 @@ export const getCart = async () => {
     }
 
     return null;
+};
+
+export const deleteCart = async (next) => {
+    let {
+        user: { email }
+    } = await profileCheck();
+
+    await AsyncStorage.removeItem(`@e_beauty_cart__${email}`);
+    next();
 };
 
 // Fetching product details

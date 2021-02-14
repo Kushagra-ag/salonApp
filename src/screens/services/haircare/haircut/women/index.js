@@ -14,7 +14,7 @@ import {
     ListItem
 } from 'native-base';
 import stylesCtm from '../../../../../styles';
-import CustomDialog from '../../../../../components/CustomDialog.js';
+import { AddToCartModal } from '../../../../../components/modals.js';
 import { fetchProduct } from '../../../../../methods/cartMethods.js';
 import serviceId from '../../../services.json';
 
@@ -55,8 +55,8 @@ export default function WomenHaircare({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <ScrollView>
-                <CustomDialog
+            <ScrollView keyboardShouldPersistTaps="handled">
+                <AddToCartModal
                     visible={visible}
                     setVisible={setVisible}
                     service={curService}

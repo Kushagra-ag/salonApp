@@ -29,7 +29,7 @@ export default function Haircut({ navigation }) {
                 </Body>
                 <Right />
             </Header>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps="handled">
                 <Text style={stylesCtm.heading}>
                     What kind of Haircut do you need today?
                 </Text>

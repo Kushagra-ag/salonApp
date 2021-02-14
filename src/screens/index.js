@@ -24,7 +24,7 @@ import Services from './services';
 import Tracking from './tracking';
 import Profile from './profile';
 import Orders from './orders';
-import Stripe from '../stripe/purchaseProduct.js';
+// import Stripe from '../stripe/purchaseProduct.js';
 import Menu from './sideMenu';
 import stylesCtm, { horizontalAnimation } from '../styles';
 
@@ -215,7 +215,7 @@ export default function Screens({ navigation }) {
                         <Stack.Screen name="Tracking" component={Tracking} />
                         <Stack.Screen name="Profile" component={Profile} />
                         <Stack.Screen name="Orders" component={Orders} />
-                        <Stack.Screen name="Stripe" component={Stripe} />
+                        
                         <Stack.Screen name="Menu" component={Menu} />
                     </Stack.Navigator>
                 ) : (
@@ -235,7 +235,7 @@ export default function Screens({ navigation }) {
                         <Drawer.Screen name="Tracking" component={Tracking} />
                         <Drawer.Screen name="Profile" component={Profile} />
                         <Drawer.Screen name="Orders" component={Orders} />
-                        <Drawer.Screen name="Stripe" component={Stripe} />
+                        
                     </Drawer.Navigator>
                 )}
             </SafeAreaView>

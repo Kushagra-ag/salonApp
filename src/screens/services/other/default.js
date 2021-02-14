@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, BackHandler, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     Header,
     Content,
@@ -13,10 +14,10 @@ import {
     List,
     ListItem
 } from 'native-base';
-import stylesCtm from '../../../../styles';
-import { fetchProduct } from '../../../../methods/cartMethods.js';
-import { AddToCartModal } from '../../../../components/modals.js';
-import serviceId from '../../services.json';
+import stylesCtm from '../../../styles';
+import { AddToCartModal } from '../../../components/modals.js';
+import { fetchProduct } from '../../../methods/cartMethods.js';
+import serviceId from '../services.json';
 
 export default function Haircolor({ navigation }) {
     const [services, addServices] = useState([]);
@@ -32,24 +33,40 @@ export default function Haircolor({ navigation }) {
         addServices([]);
 
         const {
-            services: {
-                nails: { manicure }
-            }
+            services: { other }
         } = serviceId;
 
-        manicure.forEach(id => fetchProduct(id, handleServices));
+        other.forEach(id => fetchProduct(id, handleServices));
     }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // addServices([])
+            BackHandler.addEventListener('hardwareBackPress', back);
+
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', back);
+            };
+        }, [])
+    );
+
+    const back = () => {
+        navigation.navigate('Services',{
+            screen: 'Index'
+        });
+        return true;
+    };
 
     return (
         <React.Fragment>
             <Header>
                 <Left>
-                    <Button transparent onPress={() => navigation.goBack()}>
+                    <Button transparent onPress={back}>
                         <Icon name="arrow-back" style={{ fontSize: 24 }} />
                     </Button>
                 </Left>
                 <Body>
-                    <Title>Manicure</Title>
+                    <Title>Other Services</Title>
                 </Body>
                 <Right />
             </Header>
@@ -60,7 +77,7 @@ export default function Haircolor({ navigation }) {
                     service={curService}
                 />
                 <Text style={stylesCtm.heading}>
-                    What kind of Manicure do you need today?
+                    What kind of Services do you need today?
                 </Text>
                 <View style={{ paddingVertical: 20 }}>
                     <List>

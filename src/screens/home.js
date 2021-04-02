@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     ActivityIndicator,
     StyleSheet,
@@ -35,6 +35,9 @@ import {
     CommonActions,
     useFocusEffect
 } from '@react-navigation/native';
+import Carousel from 'react-native-snap-carousel';
+import CarouselCardItem, { SLIDER_WIDTH, ITEM_WIDTH } from '../components/HomeCarouselCard.js';
+import data from '../data/homeCarouselData.js';
 import BottomNav from '../components/BottomNav.js';
 import { AddToCartModal } from '../components/modals.js';
 import Login from './auth/login.js';
@@ -43,6 +46,27 @@ import stylesCtm from '../styles';
 import { searchService } from '../methods/miscMethods.js';
 
 const { width, height } = Dimensions.get('window');
+
+const CarouselHome = () => {
+  const isCarousel = React.useRef(null)
+
+  return (
+    <View style={styles.carouselHome}>
+        <Text style={{...stylesCtm.heading, marginTop: 0, marginBottom: 15,}}>Trending now </Text>
+      <Carousel
+        layout="stack"
+        layoutCardOffset={0}
+        ref={isCarousel}
+        data={data}
+        renderItem={CarouselCardItem}
+        sliderWidth={SLIDER_WIDTH}
+        itemWidth={ITEM_WIDTH}
+        inactiveSlideShift={0}
+        useScrollView={true}
+      />
+    </View>
+  )
+}
 
 export default function Home({ navigation }) {
     const [view, setView] = useState(false);
@@ -252,88 +276,91 @@ export default function Home({ navigation }) {
                     </View>
                 )}
                 <View>
-                    <Text style={stylesCtm.heading}>Trending now </Text>
+                    
                 </View>
 
-                <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.horizontallScrollContainer}
-                >
-                    <Pressable
-                        style={styles.imgContainer}
-                        onPress={() => {
-                            console.log('presss');
-                            navigation.navigate('Services', {
-                                screen: 'Haircare',
-                                params: {
-                                    screen: 'Haircut'
-                                }
-                            });
-                        }}
-                    >
-                        <Image
-                            style={styles.image}
-                            resizeMode="cover"
-                            source={require('../../assets/app/haircutmen.jpg')}
-                        />
-                        <Text>Boys haircut 2020</Text>
-                    </Pressable>
-                    <Pressable
-                        style={styles.imgContainer}
-                        onPress={() =>
-                            navigation.navigate('Services', {
-                                screen: 'Haircare',
-                                params: {
-                                    screen: 'Index'
-                                }
-                            })
-                        }
-                    >
-                        <Image
-                            style={styles.image}
-                            source={require('../../assets/app/haircutwomen.jpg')}
-                        />
-                        <Text>Hairstyle 2020</Text>
-                    </Pressable>
-
-                    <Pressable
-                        style={styles.imgContainer}
-                        onPress={() => {
-                            console.log('presss');
-                            navigation.navigate('Services', {
-                                screen: 'Haircare',
-                                params: {
-                                    screen: 'Haircut'
-                                }
-                            });
-                        }}
-                    >
-                        <Image
-                            style={styles.image}
-                            resizeMode="cover"
-                            source={require('../../assets/app/haircutmen.jpg')}
-                        />
-                        <Text>Boys haircut 2020</Text>
-                    </Pressable>
-                    <Pressable
-                        style={styles.imgContainer}
-                        onPress={() =>
-                            navigation.navigate('Services', {
-                                screen: 'Haircare',
-                                params: {
-                                    screen: 'Index'
-                                }
-                            })
-                        }
-                    >
-                        <Image
-                            style={styles.image}
-                            source={require('../../assets/app/haircutwomen.jpg')}
-                        />
-                        <Text>Hairstyle 2020</Text>
-                    </Pressable>
-                </ScrollView>
+                {
+                    // <ScrollView
+                    //                 horizontal={true}
+                    //                 showsHorizontalScrollIndicator={false}
+                    //                 style={styles.horizontallScrollContainer}
+                    //             >
+                    //                 <Pressable
+                    //                     style={styles.imgContainer}
+                    //                     onPress={() => {
+                    //                         console.log('presss');
+                    //                         navigation.navigate('Services', {
+                    //                             screen: 'Haircare',
+                    //                             params: {
+                    //                                 screen: 'Haircut'
+                    //                             }
+                    //                         });
+                    //                     }}
+                    //                 >
+                    //                     <Image
+                    //                         style={styles.image}
+                    //                         resizeMode="cover"
+                    //                         source={require('../../assets/app/haircutmen.jpg')}
+                    //                     />
+                    //                     <Text>Boys haircut 2020</Text>
+                    //                 </Pressable>
+                    //                 <Pressable
+                    //                     style={styles.imgContainer}
+                    //                     onPress={() =>
+                    //                         navigation.navigate('Services', {
+                    //                             screen: 'Haircare',
+                    //                             params: {
+                    //                                 screen: 'Index'
+                    //                             }
+                    //                         })
+                    //                     }
+                    //                 >
+                    //                     <Image
+                    //                         style={styles.image}
+                    //                         source={require('../../assets/app/haircutwomen.jpg')}
+                    //                     />
+                    //                     <Text>Hairstyle 2020</Text>
+                    //                 </Pressable>
+                
+                    //                 <Pressable
+                    //                     style={styles.imgContainer}
+                    //                     onPress={() => {
+                    //                         console.log('presss');
+                    //                         navigation.navigate('Services', {
+                    //                             screen: 'Haircare',
+                    //                             params: {
+                    //                                 screen: 'Haircut'
+                    //                             }
+                    //                         });
+                    //                     }}
+                    //                 >
+                    //                     <Image
+                    //                         style={styles.image}
+                    //                         resizeMode="cover"
+                    //                         source={require('../../assets/app/haircutmen.jpg')}
+                    //                     />
+                    //                     <Text>Boys haircut 2020</Text>
+                    //                 </Pressable>
+                    //                 <Pressable
+                    //                     style={styles.imgContainer}
+                    //                     onPress={() =>
+                    //                         navigation.navigate('Services', {
+                    //                             screen: 'Haircare',
+                    //                             params: {
+                    //                                 screen: 'Index'
+                    //                             }
+                    //                         })
+                    //                     }
+                    //                 >
+                    //                     <Image
+                    //                         style={styles.image}
+                    //                         source={require('../../assets/app/haircutwomen.jpg')}
+                    //                     />
+                    //                     <Text>Hairstyle 2020</Text>
+                    //                 </Pressable>
+                    //             </ScrollView>
+                            }
+                <CarouselHome />
             </ScrollView>
             <BottomNav />
         </React.Fragment>
@@ -346,10 +373,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#e8e8e8',
         borderRadius: 10
     },
-    horizontallScrollContainer: {
-        paddingHorizontal: 20,
+    carouselHome: {
+        // paddingHorizontal: 20,
+        marginTop: 30, 
         paddingVertical: 15,
-        marginBottom: 50,
+        paddingBottom: 20,
         backgroundColor: '#e8e8e8'
     },
     imgContainer: {
